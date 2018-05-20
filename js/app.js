@@ -6,10 +6,10 @@ $(document).ready(function(){
 	    dataType: "xml",
 	    success: function(xml){
 	    	var $xml = $(xml);
-			var $names = $xml.find("Name");
-			console.log($names);
-			$names.each(function(key, val) {
-				$("body").append(val.textContent + "<br>");
+			var $parks = $xml.find("Park");
+			console.log($parks);
+			$parks.each(function(key, val) {
+				$("body").append($(val).find("Name").text() + "<br>");
 			});
 	    }
 	});
