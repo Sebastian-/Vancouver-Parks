@@ -6,7 +6,7 @@
 
 function Park(xmlParkData) {
     var self = this;
-    let $parkData = $(xmlParkData);
+    var $parkData = $(xmlParkData);
 
     // TODO: reevaluate if id and siteURL are worthwhile/useful
     // TODO: consider including washroom/special features data
@@ -17,12 +17,16 @@ function Park(xmlParkData) {
     self.address = $parkData.find("StreetNumber").text() + " "
                  + $parkData.find("StreetName").text();
     self.neighbourhood = $parkData.find("NeighbourhoodName").text();
-    self.latLong = $parkData.find("GoogleMapDest").text();
+
+    var LatLng = $parkData.find("GoogleMapDest").text().split(",");
+    self.lat = parseFloat(LatLng[0]);
+    self.lng = parseFloat(LatLng[1]);
+
     self.facilities = [];
     $parkData.find("Facility").each(function(index, facility) {
-        self.facilities.append({
-            type: facility.find("FacilityType").text();
-            count: facility.find("FacilityCount").text();
+        self.facilities.push({
+            type: $(facility).find("FacilityType").text(),
+            count: $(facility).find("FacilityCount").text()
         });
     });
 }

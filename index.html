@@ -3,9 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Vancouver Parks</title>
+    <link href="css/style.css" rel="stylesheet">
 </head>
 <body>
+    <div id="map"></div>
 	<script src="js/jquery-3.3.1.js"></script>
-	<script src="js/app.js"></script>
+    <script type="text/javascript" src="js/knockout-3.5.0rc.js"></script>
+    <script type="text/javascript" src="js/models/park.js"></script>
+    <script type="text/javascript" src="js/mapView.js"></script>
+    <script type="text/javascript" src="js/viewmodels/parkMapViewmodel.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3A1RBSZKAOEL32uhwnstnAoL4qfjXQ8w&callback=initMap"async defer></script>
 </body>
 </html>
