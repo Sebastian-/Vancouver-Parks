@@ -7,7 +7,12 @@
 </head>
 <body>
     <div id="map"></div>
-	<script src="js/jquery-3.3.1.js"></script>
+    <aside id="sidebar">
+        <ul id="parkList" data-bind="foreach: parks">
+            <li class="parkListItem" data-bind="text: name"></li>
+        </ul>
+    </aside>
+	<script type="text/javascript" src="js/jquery-3.3.1.js"></script>
     <script type="text/javascript" src="js/knockout-3.5.0rc.js"></script>
     <script type="text/javascript" src="js/models/park.js"></script>
     <script type="text/javascript" src="js/mapView.js"></script>
