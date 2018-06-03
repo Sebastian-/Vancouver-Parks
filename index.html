@@ -7,7 +7,7 @@
 </head>
 <body>
     <div id="map"></div>
-    <aside id="sidebar">
+    <aside id="sidebar" data-bind="style: {height: isParkListVisible()? '100%' : 'auto'}">
         <div id="searchBar">
             <button class="hamburgerIcon" data-bind="click: toggleParkList">&#9776;</button>
             <input type="" name="">

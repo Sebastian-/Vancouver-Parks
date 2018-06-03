@@ -31,7 +31,8 @@ var parkMapViewModel = function() {
     self.initMap = function() {
         self.map = new google.maps.Map(document.getElementById('map'), {
             center: {lat: 49.255, lng: -123.130},
-            zoom: 13
+            zoom: 13,
+            mapTypeControl: false
         });
         self.initMarkers();
     };
