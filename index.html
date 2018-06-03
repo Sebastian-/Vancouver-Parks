@@ -8,7 +8,11 @@
 <body>
     <div id="map"></div>
     <aside id="sidebar">
-        <ul id="parkList" data-bind="foreach: parks">
+        <div id="searchBar">
+            <button class="hamburgerIcon" data-bind="click: toggleParkList">&#9776;</button>
+            <input type="" name="">
+        </div>
+        <ul id="parkList" data-bind="visible: isParkListVisible, foreach: parks">
             <li class="parkListItem" data-bind="text: name"></li>
         </ul>
     </aside>

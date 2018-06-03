@@ -15,24 +15,32 @@ html, body {
 }
 
 #sidebar {
-    z-index: 1;
-}
-
-#parkList {
     position: fixed;
     height: 100%;
     top: 0;
     left: 0;
+    padding-bottom: 10px;
+}
+
+#searchBar {
+    background: white;
+}
+
+#parkList {
+    height: 100%;
+    list-style-type: none;
     overflow: scroll;
     background: white;
-    list-style-type: none;
 }
 
 .parkListItem {
     padding: 5px;
-
 }
 
 .parkListItem:hover {
     background: green;
+}
+
+.lastListItem {
+    height: 40vh;
 }

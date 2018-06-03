@@ -3,8 +3,10 @@ var parkMapViewModel = function() {
 
     self.map;
     self.parks = ko.observableArray();
-    self.markers = [];
+    self.isParkListVisible = ko.observable(true);
+    /* TODO map park id to markers to manage showing and hiding markers
     self.idToMarker = Map
+    */
 
     // Load park data
     $.ajax({
@@ -12,15 +14,22 @@ var parkMapViewModel = function() {
         url: "static/parks_facilities.xml",
         dataType: "xml",
         success: function(xml) {
+            // Initialize list of parks in sidebar
             var $parks = $(xml).find("Park");
             $parks.each(function(index, xmlPark) {
                 self.parks.push(new Park(xmlPark));
             });
+            // A filler <li> for easier navigation of the last elements in list
+            $("#parkList").append("<li class='lastListItem'></li>");
         }
     });
 
+    self.toggleParkList = function() {
+        self.isParkListVisible(!self.isParkListVisible());
+    }
+
     self.initMap = function() {
-        map = new google.maps.Map(document.getElementById('map'), {
+        self.map = new google.maps.Map(document.getElementById('map'), {
             center: {lat: 49.255, lng: -123.130},
             zoom: 13
         });
@@ -36,10 +45,8 @@ var parkMapViewModel = function() {
                 position: latLng,
                 map: self.map
             });
-
-
         });
-        map.fitBounds(bounds);
+        self.map.fitBounds(bounds);
     };
 
 }
