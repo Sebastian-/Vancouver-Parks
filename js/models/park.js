@@ -10,7 +10,7 @@ function Park(xmlParkData) {
 
     // TODO: reevaluate if id and siteURL are worthwhile/useful
     // TODO: consider including washroom/special features data
-    self.id = $parkData.attr("ID");
+    self.id = parseInt($parkData.attr("ID"));
     self.siteURL = "http://covapp.vancouver.ca/parkfinder/" +
                    "parkdetail.aspx?inparkid=" + self.id
     self.name = $parkData.find("Name").text();

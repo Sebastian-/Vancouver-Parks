@@ -11,9 +11,11 @@
     <aside id="sidebar" data-bind="style: {height: isParkListVisible()? '100%' : 'auto'}">
         <div id="searchBar">
             <button class="hamburgerIcon" data-bind="click: toggleParkList">&#9776;</button>
-            <input type="text" id="searchBarInput">
+            <form data-bind="submit: searchParks">
+                <input type="text" id="searchBarInput" data-bind="textInput: searchQuery">
+            </form>
         </div>
-        <ul id="parkList" data-bind="visible: isParkListVisible, foreach: parks">
+        <ul id="parkList" data-bind="visible: isParkListVisible, foreach: parkList">
             <li class="parkListItem" data-bind="text: name"></li>
         </ul>
     </aside>
