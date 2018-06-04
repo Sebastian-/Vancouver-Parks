@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Vancouver Parks</title>
+    <link href="css/jquery-ui.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
 </head>
 <body>
@@ -10,7 +11,7 @@
     <aside id="sidebar" data-bind="style: {height: isParkListVisible()? '100%' : 'auto'}">
         <div id="searchBar">
             <button class="hamburgerIcon" data-bind="click: toggleParkList">&#9776;</button>
-            <input type="" name="">
+            <input type="text" id="searchBarInput">
         </div>
         <ul id="parkList" data-bind="visible: isParkListVisible, foreach: parks">
             <li class="parkListItem" data-bind="text: name"></li>
@@ -18,8 +19,10 @@
     </aside>
 	<script type="text/javascript" src="js/lib/jquery-3.3.1.js"></script>
     <script type="text/javascript" src="js/lib/knockout-3.5.0rc.js"></script>
+    <script src="js/lib/external/jquery/jquery.js"></script>
+    <script src="js/lib/jquery-ui.js"></script>
     <script type="text/javascript" src="js/models/park.js"></script>
     <script type="text/javascript" src="js/viewmodels/parkMapViewmodel.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3A1RBSZKAOEL32uhwnstnAoL4qfjXQ8w&callback=viewModel.initMap"async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3A1RBSZKAOEL32uhwnstnAoL4qfjXQ8w&callback=viewModel.initGoogleMap"async defer></script>
 </body>
 </html>
