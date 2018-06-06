@@ -16,7 +16,7 @@
             </form>
         </div>
         <ul id="parkList" data-bind="visible: isParkListVisible, foreach: parkList">
-            <li class="parkListItem" data-bind="text: name"></li>
+            <li class="parkListItem" data-bind="text: name, click: $root.displayInfoWindow"></li>
         </ul>
     </aside>
 	<script type="text/javascript" src="js/lib/jquery-3.3.1.js"></script>

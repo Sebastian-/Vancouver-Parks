@@ -2,6 +2,7 @@ var parkMapViewModel = function() {
     const self = this;
 
     self.googleMap;
+    self.infoWindow;
     self.allParks = [];
     self.parkList = ko.observableArray();
     self.isParkListVisible = ko.observable(true);
@@ -59,8 +60,10 @@ var parkMapViewModel = function() {
 
     self.initGoogleMap = function() {
         self.setGoogleMap();
+        self.setInfoWindow();
         self.initMarkers();
     };
+
 
     self.setGoogleMap = function() {
         self.googleMap = new google.maps.Map(document.getElementById('map'), {
@@ -68,7 +71,13 @@ var parkMapViewModel = function() {
             zoom: 13,
             mapTypeControl: false
         });
-    }
+    };
+
+    self.setInfoWindow = function() {
+        self.infoWindow = new google.maps.InfoWindow({
+            content:"Hello World"
+        });
+    };
 
     self.initMarkers = function() {
         var bounds = new google.maps.LatLngBounds();
@@ -80,6 +89,9 @@ var parkMapViewModel = function() {
                 map: self.googleMap
             });
             self.parkIdToMarker.set(park.id, marker);
+            marker.addListener("click", function() {
+                self.displayInfoWindow(park);
+            });
         });
         self.googleMap.fitBounds(bounds);
     };
@@ -108,13 +120,14 @@ var parkMapViewModel = function() {
     };
 
     self.searchParks = function() {
-        if(!self.searchMap.has(self.searchQuery())) {
+        let query = self.searchQuery().trim();
+        if(!self.searchMap.has(query)) {
             self.displayNoResultParkList();
             return;
         }
 
         self.resetParkList();
-        let result = self.searchMap.get(self.searchQuery());
+        let result = self.searchMap.get(query);
         self.parkList.remove( function(park) {
             return !result.has(park.id);
         });
@@ -124,7 +137,12 @@ var parkMapViewModel = function() {
     self.displayNoResultParkList = function() {
         $("#parkList").empty();
         $("#parkList").append('<li class="noResultListItem">No Results Found</li>')
-    }
+    };
+
+    self.displayInfoWindow = function(park) {
+        console.log(park);
+        self.infoWindow.open(map, self.parkIdToMarker.get(park.id));
+    };
 
     // Utility Functions
     self.addToSearchMap = function(key, parkID) {
