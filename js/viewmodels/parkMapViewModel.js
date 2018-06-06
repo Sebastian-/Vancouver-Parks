@@ -6,37 +6,48 @@ var parkMapViewModel = function() {
     self.parkList = ko.observableArray();
     self.isParkListVisible = ko.observable(true);
     self.searchQuery = ko.observable("");
+
+    // Maps autocomplete search terms {String} to resulting set of park IDs {Set(Integer)}
     self.searchMap = new Map();
+
+    // Maps park IDs {Integer} to corresponding map marker {google.map.Marker}
     self.parkIdToMarker = new Map();
 
-    // TODO pull out the initialization functions here and give them names
     $.ajax({
         type: "GET",
         url: "static/parks_facilities.xml",
         dataType: "xml",
         success: function(xmlResponse) {
-            var $parks = $(xmlResponse).find("Park");
-            $parks.each(function(index, xmlPark) {
-                var park = new Park(xmlPark);
-                self.allParks.push(park);
-                self.parkList.push(park);
-            });
-            // A filler <li> for easier navigation of the last elements in list
-            $("#parkList").append("<li class='lastListItem'></li>");
+            self.initListOfParks(xmlResponse);
         },
         complete: function() {
-            // Initialize searchMap
-            // TODO use ko.utils.arrayForEach instead
-            self.allParks.forEach(function(park) {
-                self.addToSearchMap(park.name, park.id);
-                self.addToSearchMap(park.neighbourhood, park.id);
-                park.facilities.forEach(function(facility) {
-                    self.addToSearchMap(facility.type, park.id);
-                });
-            });
+            self.initSearchMap();
             self.initSearchBox();
         }
     });
+
+    self.initListOfParks = function(xmlParkData) {
+        var $parks = $(xmlParkData).find("Park");
+        $parks.each( function(index, xmlPark) {
+            var park = new Park(xmlPark);
+            self.allParks.push(park);
+            self.parkList.push(park);
+        });
+        // A filler <li> for easier navigation of the last elements in list
+        $("#parkList").append("<li class='lastListItem'></li>");
+    };
+
+    self.initSearchMap = function() {
+        ko.utils.arrayForEach(self.allParks, function(park) {
+            self.addToSearchMap(park.name, park.id);
+            self.addToSearchMap(park.neighbourhood, park.id);
+            ko.utils.arrayForEach(park.facilities, function(facility) {
+                self.addToSearchMap(facility.type, park.id);
+            });
+            // A query of "" should return all parks
+            self.addToSearchMap("", park.id);
+        });
+    };
 
     self.initSearchBox = function() {
         $("#searchBarInput").autocomplete({
@@ -47,13 +58,17 @@ var parkMapViewModel = function() {
     };
 
     self.initGoogleMap = function() {
+        self.setGoogleMap();
+        self.initMarkers();
+    };
+
+    self.setGoogleMap = function() {
         self.googleMap = new google.maps.Map(document.getElementById('map'), {
             center: {lat: 49.255, lng: -123.130},
             zoom: 13,
             mapTypeControl: false
         });
-        self.initMarkers();
-    };
+    }
 
     self.initMarkers = function() {
         var bounds = new google.maps.LatLngBounds();
@@ -70,12 +85,8 @@ var parkMapViewModel = function() {
     };
 
     self.updateMarkers = function() {
-        // TODO update bounds/zoom map appropriately
         self.unpinAllMarkers();
-        ko.utils.arrayForEach(self.parkList(), function(park) {
-            let marker = self.parkIdToMarker.get(park.id);
-            marker.setMap(self.googleMap);
-        });
+        self.pinParkListMarkers();
     };
 
     self.unpinAllMarkers = function() {
@@ -84,26 +95,36 @@ var parkMapViewModel = function() {
         }
     };
 
+    self.pinParkListMarkers = function() {
+        ko.utils.arrayForEach(self.parkList(), function(park) {
+            let marker = self.parkIdToMarker.get(park.id);
+            marker.setMap(self.googleMap);
+        });
+    }
+
     // Handler Functions
     self.toggleParkList = function() {
         self.isParkListVisible(!self.isParkListVisible());
     };
 
-    self.searchParks = function(formElement) {
-        // TODO handle case where query returns no results or same query is passed again
-        let query = self.searchQuery();
-        console.log(query);
-        if(query === "") {
-            self.resetParkList();
-        } else {
-            self.resetParkList();
-            let result = self.searchMap.get(query);
-            self.parkList.remove( function(park) {
-                return !result.has(park.id);
-            });
-            self.updateMarkers();
+    self.searchParks = function() {
+        if(!self.searchMap.has(self.searchQuery())) {
+            self.displayNoResultParkList();
+            return;
         }
+
+        self.resetParkList();
+        let result = self.searchMap.get(self.searchQuery());
+        self.parkList.remove( function(park) {
+            return !result.has(park.id);
+        });
+        self.updateMarkers();
     };
+
+    self.displayNoResultParkList = function() {
+        $("#parkList").empty();
+        $("#parkList").append('<li class="noResultListItem">No Results Found</li>')
+    }
 
     // Utility Functions
     self.addToSearchMap = function(key, parkID) {
@@ -115,6 +136,7 @@ var parkMapViewModel = function() {
     };
 
     self.resetParkList = function() {
+        $("#parkList").empty();
         self.parkList.removeAll();
         for(let i = 0; i < self.allParks.length; i++) {
             self.parkList.push(self.allParks[i]);

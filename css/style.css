@@ -42,3 +42,14 @@ html, body {
 .lastListItem {
     height: 40vh;
 }
+
+.noResultListItem {
+    padding: 5px;
+}
+
+.ui-menu {
+    max-height: 60vh;
+    max-width: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
