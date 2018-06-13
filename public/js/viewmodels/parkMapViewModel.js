@@ -14,14 +14,12 @@ var parkMapViewModel = function() {
     // Maps park IDs {Integer} to corresponding map marker {google.map.Marker}
     self.parkIdToMarker = new Map();
 
-    $.ajax({
+    let loadParks = $.ajax({
         type: "GET",
-        url: "static/parks_facilities.xml",
+        url: "parks_facilities.xml",
         dataType: "xml",
         success: function(xmlResponse) {
             self.initListOfParks(xmlResponse);
-        },
-        complete: function() {
             self.initSearchMap();
             self.initSearchBox();
         }
@@ -61,7 +59,7 @@ var parkMapViewModel = function() {
     self.initGoogleMap = function() {
         self.setGoogleMap();
         self.setInfoWindow();
-        self.initMarkers();
+        $.when(loadParks).done(self.initMarkers);
     };
 
 
@@ -121,6 +119,7 @@ var parkMapViewModel = function() {
 
     self.searchParks = function() {
         let query = self.searchQuery().trim();
+
         if(!self.searchMap.has(query)) {
             self.displayNoResultParkList();
             return;
@@ -141,8 +140,50 @@ var parkMapViewModel = function() {
 
     self.displayInfoWindow = function(park) {
         console.log(park);
+        self.populateInfoWindow(park);
         self.infoWindow.open(map, self.parkIdToMarker.get(park.id));
+        self.googleMap.panTo(self.parkIdToMarker.get(park.id).getPosition());
     };
+
+    self.populateInfoWindow = function(park) {
+        // TODO IMPLEMENT ME
+        // - get Yelp Buisiness ID using the matches API
+        // - append park info using given ID
+
+        let yelpID = self.getYelpID();
+        self.infoWindow.setContent(yelpID);
+    };
+
+    // TODO figure out CORS ISSUE
+    self.getYelpID = function(park) {
+        /* DOESN'T WORK THANKS TO CORS - IMPLEMENT IN NODEJS
+        let id = "";
+        let yelpURL = "https://api.yelp.com/v3/businesses/matches"
+        yelpURL += "?" + $.param({
+            name: "Arbutus Village Park",
+            address1: "4202 Valley Drive",
+            city: "Vancouver",
+            state: "BC",
+            country: "CA"
+        });
+        $.ajax({
+            type: "GET",
+            url: yelpURL,
+            xhrFields: {
+                withCredentials: true
+            },
+            beforeSend: function(request) {
+                request.setRequestHeader("Authorization", "Bearer 2sRHFP7gVCCrTvuGYjL6HsDllJMTaTtZSW649XvJDaX6yxoZ6w5QX0IdkuNVTXvJC7whaVEumo-j5ED_3dYcS2R--qFSvMs0h0Sy4vUB038H1jJll3cIqdDZ73cYW3Yx");
+            },
+            success: function(response) {
+                //TODO VALIDATE RESPONSE
+                id = response["businesses"][0]["id"];
+            }
+        });
+
+        return id;
+        */
+    }
 
     // Utility Functions
     self.addToSearchMap = function(key, parkID) {

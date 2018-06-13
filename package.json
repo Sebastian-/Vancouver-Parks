@@ -1,0 +1,22 @@
+{
+  "name": "vancouverparks",
+  "version": "1.0.0",
+  "description": "A single-page webapp for discovering parks in Vancouver, BC",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sebastian-/Vancouver-Parks.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sebastian-/Vancouver-Parks/issues"
+  },
+  "homepage": "https://github.com/Sebastian-/Vancouver-Parks#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
