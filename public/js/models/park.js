@@ -14,8 +14,9 @@ function Park(xmlParkData) {
     self.siteURL = "http://covapp.vancouver.ca/parkfinder/" +
                    "parkdetail.aspx?inparkid=" + self.id
     self.name = $parkData.find("Name").text();
-    self.address = $parkData.find("StreetNumber").text() + " "
-                 + $parkData.find("StreetName").text();
+    self.streetNumber = $parkData.find("StreetNumber").text();
+    self.streetName = $parkData.find("StreetName").text();
+    self.address = self.streetNumber + " " + self.streetName;
     self.neighbourhood = $parkData.find("NeighbourhoodName").text();
 
     var LatLng = $parkData.find("GoogleMapDest").text().split(",");

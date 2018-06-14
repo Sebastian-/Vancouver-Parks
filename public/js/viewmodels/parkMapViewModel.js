@@ -11,7 +11,7 @@ var parkMapViewModel = function() {
     // Maps autocomplete search terms {String} to resulting set of park IDs {Set(Integer)}
     self.searchMap = new Map();
 
-    // Maps park IDs {Integer} to corresponding map marker {google.map.Marker}
+    // Maps park.id {Integer} to corresponding map marker {google.map.Marker}
     self.parkIdToMarker = new Map();
 
     let loadParks = $.ajax({
@@ -52,14 +52,13 @@ var parkMapViewModel = function() {
         $("#searchBarInput").autocomplete({
             source: Array.from(self.searchMap.keys()),
             minLength: 2
-
         });
     };
 
     self.initGoogleMap = function() {
         self.setGoogleMap();
         self.setInfoWindow();
-        $.when(loadParks).done(self.initMarkers);
+        $.when(loadParks).then(self.initMarkers);
     };
 
 
@@ -73,7 +72,7 @@ var parkMapViewModel = function() {
 
     self.setInfoWindow = function() {
         self.infoWindow = new google.maps.InfoWindow({
-            content:"Hello World"
+            content:""
         });
     };
 
@@ -102,7 +101,7 @@ var parkMapViewModel = function() {
     self.unpinAllMarkers = function() {
         for(let marker of self.parkIdToMarker.values()) {
             marker.setMap(null);
-        }
+        };
     };
 
     self.pinParkListMarkers = function() {
@@ -119,9 +118,10 @@ var parkMapViewModel = function() {
 
     self.searchParks = function() {
         let query = self.searchQuery().trim();
+        self.infoWindow.close();
 
         if(!self.searchMap.has(query)) {
-            self.displayNoResultParkList();
+            self.displayNoSearchResults();
             return;
         }
 
@@ -133,56 +133,42 @@ var parkMapViewModel = function() {
         self.updateMarkers();
     };
 
-    self.displayNoResultParkList = function() {
+    self.displayNoSearchResults = function() {
         $("#parkList").empty();
         $("#parkList").append('<li class="noResultListItem">No Results Found</li>')
+        self.unpinAllMarkers();
     };
 
     self.displayInfoWindow = function(park) {
-        console.log(park);
         self.populateInfoWindow(park);
         self.infoWindow.open(map, self.parkIdToMarker.get(park.id));
         self.googleMap.panTo(self.parkIdToMarker.get(park.id).getPosition());
     };
 
     self.populateInfoWindow = function(park) {
-        // TODO IMPLEMENT ME
-        // - get Yelp Buisiness ID using the matches API
-        // - append park info using given ID
+        let review = self.getYelpReview(park);
+        //let rating = reviews.value;
+        //let reviewCount = reviews.count;
 
-        let yelpID = self.getYelpID();
-        self.infoWindow.setContent(yelpID);
+        let infoWindowContent =
+            `<div class="infoWindowContent">
+                <h3 class="infoWindowHeader">${park.name}</h3>
+                <p class="infoWindowParkAddress">${park.address}</p>
+            </div>`;
+
+        self.infoWindow.setContent(infoWindowContent);
     };
 
-    // TODO figure out CORS ISSUE
-    self.getYelpID = function(park) {
-        /* DOESN'T WORK THANKS TO CORS - IMPLEMENT IN NODEJS
-        let id = "";
-        let yelpURL = "https://api.yelp.com/v3/businesses/matches"
-        yelpURL += "?" + $.param({
-            name: "Arbutus Village Park",
-            address1: "4202 Valley Drive",
-            city: "Vancouver",
-            state: "BC",
-            country: "CA"
+    self.getYelpReview = function(park) {
+        return new Promise(function(resolve, reject) {
+            let queryURL = "http://localhost:8080/yelpReview/";
+            queryURL += self.formatQueryParams({
+                "name": park.name,
+                "address": park.address
+            });
+            console.log(encodeURI(queryURL));
+            //$.getJSON(queryURL, )
         });
-        $.ajax({
-            type: "GET",
-            url: yelpURL,
-            xhrFields: {
-                withCredentials: true
-            },
-            beforeSend: function(request) {
-                request.setRequestHeader("Authorization", "Bearer 2sRHFP7gVCCrTvuGYjL6HsDllJMTaTtZSW649XvJDaX6yxoZ6w5QX0IdkuNVTXvJC7whaVEumo-j5ED_3dYcS2R--qFSvMs0h0Sy4vUB038H1jJll3cIqdDZ73cYW3Yx");
-            },
-            success: function(response) {
-                //TODO VALIDATE RESPONSE
-                id = response["businesses"][0]["id"];
-            }
-        });
-
-        return id;
-        */
     }
 
     // Utility Functions
@@ -201,6 +187,15 @@ var parkMapViewModel = function() {
             self.parkList.push(self.allParks[i]);
         }
     };
+
+    self.formatQueryParams = function(params) {
+        let query = "";
+        Object.keys(params).forEach(function(key,index) {
+            query += key + "/" + params[key] + "/";
+        });
+        // some park info has single quotes (eg. Coopers' Park)
+        return query.replace(/'/g, '%27');
+    }
 
 }
 

@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Sebastian-/Vancouver-Parks#readme",
   "dependencies": {
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "yelp-fusion": "^2.0.3"
   }
 }
