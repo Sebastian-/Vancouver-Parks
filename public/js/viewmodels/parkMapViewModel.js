@@ -14,6 +14,7 @@ var parkMapViewModel = function() {
     // Maps park.id {Integer} to corresponding map marker {google.map.Marker}
     self.parkIdToMarker = new Map();
 
+    // TODO handle errors
     let loadParks = $.ajax({
         type: "GET",
         url: "parks_facilities.xml",
@@ -146,28 +147,40 @@ var parkMapViewModel = function() {
     };
 
     self.populateInfoWindow = function(park) {
-        let review = self.getYelpReview(park);
-        //let rating = reviews.value;
-        //let reviewCount = reviews.count;
+        // TODO handle errors
+        let getReview = self.getYelpReview(park);
+        getReview.then(function(response) {
+            let rating = response.rating;
+            let reviewCount = response.count;
 
-        let infoWindowContent =
+            // TODO review/reviews for 1/2+ reviewCount
+            let infoWindowContent =
             `<div class="infoWindowContent">
                 <h3 class="infoWindowHeader">${park.name}</h3>
                 <p class="infoWindowParkAddress">${park.address}</p>
+                <p>${rating} stars with ${reviewCount} reviews</p>
             </div>`;
 
-        self.infoWindow.setContent(infoWindowContent);
+            self.infoWindow.setContent(infoWindowContent);
+        }, function(error) {
+            console.log(error);
+        });
     };
 
     self.getYelpReview = function(park) {
+        // TODO look over .fail
         return new Promise(function(resolve, reject) {
             let queryURL = "http://localhost:8080/yelpReview/";
             queryURL += self.formatQueryParams({
                 "name": park.name,
                 "address": park.address
             });
-            console.log(encodeURI(queryURL));
-            //$.getJSON(queryURL, )
+
+            $.getJSON(encodeURI(queryURL), function(response) {
+                resolve(response);
+            }).fail(function(response) {
+                reject(response);
+            });
         });
     }
 
@@ -191,8 +204,9 @@ var parkMapViewModel = function() {
     self.formatQueryParams = function(params) {
         let query = "";
         Object.keys(params).forEach(function(key,index) {
-            query += key + "/" + params[key] + "/";
+            query += encodeURIComponent(key) + "/" + encodeURIComponent(params[key]) + "/";
         });
+
         // some park info has single quotes (eg. Coopers' Park)
         return query.replace(/'/g, '%27');
     }
