@@ -117,7 +117,12 @@ var parkMapViewModel = function() {
         self.isParkListVisible(!self.isParkListVisible());
     };
 
+
+    // TODO query doesn't match if case is not exactly the same
     self.searchParks = function() {
+        // autocomplete field won't update properly without refocusing
+        $("#searchBarInput").blur();
+        $("#searchBarInput").focus();
         let query = self.searchQuery().trim();
         self.infoWindow.close();
 
@@ -149,11 +154,11 @@ var parkMapViewModel = function() {
     self.populateInfoWindow = function(park) {
         // TODO handle errors
         let getReview = self.getYelpReview(park);
-        getReview.then(function(response) {
-            let rating = response.rating;
-            let reviewCount = response.count;
+        getReview.then(function(review) {
+            let rating = review.rating;
+            let reviewCount = review.count;
 
-            // TODO review/reviews for 1/2+ reviewCount
+            // TODO review/reviews for 0/1/2+ reviewCount
             let infoWindowContent =
             `<div class="infoWindowContent">
                 <h3 class="infoWindowHeader">${park.name}</h3>
@@ -168,12 +173,13 @@ var parkMapViewModel = function() {
     };
 
     self.getYelpReview = function(park) {
-        // TODO look over .fail
+        // TODO handle .fail
         return new Promise(function(resolve, reject) {
             let queryURL = "http://localhost:8080/yelpReview/";
             queryURL += self.formatQueryParams({
                 "name": park.name,
-                "address": park.address
+                "latitude": park.lat,
+                "longitude": park.lng
             });
 
             $.getJSON(encodeURI(queryURL), function(response) {

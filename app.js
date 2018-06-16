@@ -12,27 +12,38 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/', (req, res) => res.sendFile('index.html'));
 
-app.get('/yelpReview/name/:parkName/address/:parkAddress', (req, res) => {
-    yelpClient.businessMatch('lookup', {
-        name: decodeURIComponent(req.params.parkName),
-        address1: decodeURIComponent(req.params.parkAddress),
-        city: 'Vancouver',
-        state: 'BC',
-        country: 'CA'
-    }).then(response => {
-        // TODO make sure to check that the response is an appropriate match
-        // TODO handle errors
-        console.log(response.jsonBody);
-        yelpClient.business(response.jsonBody.businesses[0].id).then(response => {
-            console.log(response.jsonBody);
+app.get('/yelpReview/name/:parkName/latitude/:latitude/longitude/:longitude', (req, res) => {
+    console.log({
+        term: decodeURIComponent(req.params.parkName),
+        latitude: decodeURIComponent(req.params.latitude),
+        longitude: decodeURIComponent(req.params.longitude)
+    });
+    yelpClient.search({
+        term: decodeURIComponent(req.params.parkName),
+        latitude: decodeURIComponent(req.params.latitude),
+        longitude: decodeURIComponent(req.params.longitude),
+        categories: 'parks,gardens,playgrounds',
+        locale: 'en_CA',
+    }).then(yelpResponse => {
+        const parks = yelpResponse.jsonBody.businesses;
+        /* TODO handle search errors
+            - coal harbour park matches to stanley park
+        */
+        if(parks.length === 0 || parks[0].distance > 1200) {
             res.json({
-                rating: response.jsonBody.rating,
-                count: response.jsonBody.review_count
+                'rating': 0,
+                'count': 0
             });
-        }).catch(e => {
-            console.log(e);
-        });
+        } else {
+            console.log(parks[0].name);
+            console.log(parks[0].distance);
+            res.json({
+                'rating': parks[0].rating,
+                'count': parks[0].review_count
+            });
+        }
     }).catch(e => {
+        // TODO handle errors
         console.log(e);
     });
 });
