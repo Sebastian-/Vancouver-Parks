@@ -33,8 +33,17 @@ let parkMapViewModel = function() {
             self.allParks.push(park);
             self.parkList.push(park);
         });
-        // A filler <li> for easier navigation of the last elements in list
-        $("#parkList").append("<li class='lastListItem'></li>");
+        self.appendLastLi();
+    };
+
+    self.appendLastLi = function() {
+        if(self.parkList().length !== 0) {
+            // A filler <li> for easier navigation of the last elements in list
+            $("#parkList").append("<li class='lastListItem'></li>");
+        } else {
+            $("#parkList").empty();
+            $("#parkList").append('<li class="noResultListItem">No Results Found</li>')
+        }
     };
 
     self.initSearchMap = function() {
@@ -133,15 +142,16 @@ let parkMapViewModel = function() {
 
         self.resetParkList();
         let result = self.searchMap.get(query);
-        self.parkList.remove( function(park) {
+        self.parkList.remove(function(park) {
             return !result.has(park.id);
         });
+        self.appendLastLi();
         self.updateMarkers();
     };
 
     self.displayNoSearchResults = function() {
-        $("#parkList").empty();
-        $("#parkList").append('<li class="noResultListItem">No Results Found</li>')
+        self.parkList.removeAll();
+        self.appendLastLi();
         self.unpinAllMarkers();
     };
 
@@ -165,6 +175,7 @@ let parkMapViewModel = function() {
             let rating = review.rating;
             let reviewCount = review.count;
 
+            // TODO if there are no reviews, do not display yelp assets
             $("<img>", {
                 id: "yelpRatingStars",
                 src: "img/" + rating + "_star.png",

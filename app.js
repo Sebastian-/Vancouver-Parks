@@ -22,7 +22,7 @@ app.get('/yelpReview/name/:parkName/latitude/:latitude/longitude/:longitude', (r
         term: decodeURIComponent(req.params.parkName),
         latitude: decodeURIComponent(req.params.latitude),
         longitude: decodeURIComponent(req.params.longitude),
-        categories: 'parks,gardens,playgrounds,beaches',
+        categories: 'parks,gardens,playgrounds,beaches,golf,swimmingpools',
         locale: 'en_CA',
     }).then(yelpResponse => {
         const parks = yelpResponse.jsonBody.businesses;
