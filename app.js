@@ -22,14 +22,13 @@ app.get('/yelpReview/name/:parkName/latitude/:latitude/longitude/:longitude', (r
         term: decodeURIComponent(req.params.parkName),
         latitude: decodeURIComponent(req.params.latitude),
         longitude: decodeURIComponent(req.params.longitude),
-        categories: 'parks,gardens,playgrounds',
+        categories: 'parks,gardens,playgrounds,beaches',
         locale: 'en_CA',
     }).then(yelpResponse => {
         const parks = yelpResponse.jsonBody.businesses;
-        /* TODO handle search errors
-            - coal harbour park matches to stanley park
-        */
-        if(parks.length === 0 || parks[0].distance > 1200) {
+        if(parks.length === 0
+           || parks[0].distance > 2000
+           || !hasParkNameOverlap(parks[0].name, decodeURIComponent(req.params.parkName))) {
             res.json({
                 'rating': 0,
                 'count': 0
@@ -49,3 +48,17 @@ app.get('/yelpReview/name/:parkName/latitude/:latitude/longitude/:longitude', (r
 });
 
 app.listen(8080, () => console.log('App is listening on port 8080!'));
+
+
+// Returns true if name and parkName share any words aside from 'park'
+function hasParkNameOverlap(name, parkName) {
+    name = name.toLowerCase().trim();
+
+    for(let word of parkName.split(/\s/)) {
+        word = word.replace(/\W/, "").toLowerCase().trim();
+        if(word === 'park') continue;
+        if(name.includes(word)) return true;
+    }
+
+    return false;
+};
