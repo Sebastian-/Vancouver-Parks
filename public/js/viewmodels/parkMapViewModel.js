@@ -1,4 +1,4 @@
-var parkMapViewModel = function() {
+let parkMapViewModel = function() {
     const self = this;
 
     self.googleMap;
@@ -152,28 +152,41 @@ var parkMapViewModel = function() {
     };
 
     self.populateInfoWindow = function(park) {
-        // TODO handle errors
+        // TODO set min width of content div to be enough to contain rating/yelp logo
+        let infoWindowContent =
+            `<div id="infoWindowContent">
+                <h3 class="infoWindowHeader">${park.name}</h3>
+                <p class="infoWindowParkAddress">${park.address}</p>
+            </div>`;
+        self.infoWindow.setContent(infoWindowContent);
+
         let getReview = self.getYelpReview(park);
         getReview.then(function(review) {
             let rating = review.rating;
             let reviewCount = review.count;
 
-            // TODO review/reviews for 0/1/2+ reviewCount
-            let infoWindowContent =
-            `<div class="infoWindowContent">
-                <h3 class="infoWindowHeader">${park.name}</h3>
-                <p class="infoWindowParkAddress">${park.address}</p>
-                <p>${rating} stars with ${reviewCount} reviews</p>
-            </div>`;
+            $("<img>", {
+                id: "yelpRatingStars",
+                src: "img/" + rating + "_star.png",
+                "height": "20px"
+            }).appendTo("#infoWindowContent");
 
-            self.infoWindow.setContent(infoWindowContent);
+            // TODO link this to the yelp page for the park
+            $("<img>", {
+                "id": "yelpTM",
+                "src": "img/Yelp_tm.png",
+                "height": "40px"
+            }).appendTo("#infoWindowContent");
+
+            // TODO wording review/reviews for 0/1/2+ reviewCount
+            $("#infoWindowContent").append("<p> " + rating + " stars with " + reviewCount + " reviews</p>");
         }, function(error) {
+            // TODO handle errors
             console.log(error);
         });
     };
 
     self.getYelpReview = function(park) {
-        // TODO handle .fail
         return new Promise(function(resolve, reject) {
             let queryURL = "http://localhost:8080/yelpReview/";
             queryURL += self.formatQueryParams({
