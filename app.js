@@ -13,11 +13,6 @@ app.use(express.static(__dirname + '/public'));
 app.get('/', (req, res) => res.sendFile('index.html'));
 
 app.get('/yelpReview/name/:parkName/latitude/:latitude/longitude/:longitude', (req, res) => {
-    console.log({
-        term: decodeURIComponent(req.params.parkName),
-        latitude: decodeURIComponent(req.params.latitude),
-        longitude: decodeURIComponent(req.params.longitude)
-    });
     yelpClient.search({
         term: decodeURIComponent(req.params.parkName),
         latitude: decodeURIComponent(req.params.latitude),
@@ -34,11 +29,10 @@ app.get('/yelpReview/name/:parkName/latitude/:latitude/longitude/:longitude', (r
                 'count': 0
             });
         } else {
-            console.log(parks[0].name);
-            console.log(parks[0].distance);
             res.json({
                 'rating': parks[0].rating,
-                'count': parks[0].review_count
+                'count': parks[0].review_count,
+                'yelpURL': parks[0].url
             });
         }
     }).catch(e => {

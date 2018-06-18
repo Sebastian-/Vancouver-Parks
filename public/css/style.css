@@ -2,7 +2,7 @@
     box-sizing: border-box;
     margin: 0px;
     padding: 0px;
-    font-family: 'Roboto', sans-serif;
+    font-family: sans-serif;
 }
 
 html, body {
@@ -85,4 +85,8 @@ html, body {
     max-width: 100%;
     overflow-y: scroll;
     overflow-x: hidden;
+}
+
+#infoWindowContent {
+    min-width: 176px;
 }

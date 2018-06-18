@@ -3,6 +3,7 @@ let parkMapViewModel = function() {
 
     self.googleMap;
     self.infoWindow;
+    self.selectedMarker;
     self.allParks = [];
     self.parkList = ko.observableArray();
     self.isParkListVisible = ko.observable(true);
@@ -119,6 +120,7 @@ let parkMapViewModel = function() {
         // autocomplete field won't update properly without refocusing
         $("#searchBarInput").blur();
         $("#searchBarInput").focus();
+
         let query = self.searchQuery().trim();
         self.infoWindow.close();
 
@@ -133,6 +135,9 @@ let parkMapViewModel = function() {
             return !result.has(park.id);
         });
         self.updateMarkers();
+        if(self.parkList().length === 1) {
+            self.displayInfoWindow(self.parkList()[0]);
+        };
     };
 
     self.displayNoSearchResults = function() {
@@ -141,15 +146,19 @@ let parkMapViewModel = function() {
     };
 
     self.displayInfoWindow = function(park) {
+        if(self.selectedMarker) self.selectedMarker.setAnimation(null);
+
+        self.selectedMarker = self.parkIdToMarker.get(park.id);
+        self.selectedMarker.setAnimation(google.maps.Animation.BOUNCE);
         self.populateInfoWindow(park);
-        self.infoWindow.open(map, self.parkIdToMarker.get(park.id));
-        self.googleMap.panTo(self.parkIdToMarker.get(park.id).getPosition());
+        self.infoWindow.open(map, self.selectedMarker);
+        self.googleMap.panTo(self.selectedMarker.getPosition());
     };
 
     self.populateInfoWindow = function(park) {
         // Do not repopulate the infowindow if multiple clicks have been made on the same park
         if($(".infoWindowHeader").text() === park.name) return;
-        // TODO set min width of content div to be enough to contain rating/yelp logo
+
         let infoWindowContent =
             `<div id="infoWindowContent">
                 <h3 class="infoWindowHeader">${park.name}</h3>
@@ -162,22 +171,32 @@ let parkMapViewModel = function() {
             let rating = review.rating;
             let reviewCount = review.count;
 
-            // TODO if there are no reviews, do not display yelp assets
+            if(reviewCount === 0) {
+                $("#infoWindowContent").append("<p>No Yelp Reviews Found</p>");
+                return;
+            };
+
             $("<img>", {
                 id: "yelpRatingStars",
                 src: "img/" + rating + "_star.png",
                 "height": "20px"
             }).appendTo("#infoWindowContent");
 
-            // TODO link this to the yelp page for the park
+            $("<a/>", {
+                "id": "yelpURL",
+                "href": review.yelpURL
+            }).appendTo("#infoWindowContent");
+
             $("<img>", {
                 "id": "yelpTM",
                 "src": "img/Yelp_tm.png",
                 "height": "40px"
-            }).appendTo("#infoWindowContent");
+            }).appendTo("#yelpURL");
 
-            // TODO wording review/reviews for 0/1/2+ reviewCount
-            $("#infoWindowContent").append("<p> " + rating + " stars with " + reviewCount + " reviews</p>");
+            $("#infoWindowContent").append("<p> "
+                                           + rating + " stars with "
+                                           + reviewCount + " review"
+                                           + (reviewCount !== 1 ? "s" : "") +"</p>");
         }, function(error) {
             // TODO handle errors
             console.log(error);
