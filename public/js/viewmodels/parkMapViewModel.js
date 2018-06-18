@@ -126,8 +126,6 @@ let parkMapViewModel = function() {
         self.isParkListVisible(!self.isParkListVisible());
     };
 
-
-    // TODO query doesn't match if case is not exactly the same
     self.searchParks = function() {
         // autocomplete field won't update properly without refocusing
         $("#searchBarInput").blur();
@@ -162,6 +160,8 @@ let parkMapViewModel = function() {
     };
 
     self.populateInfoWindow = function(park) {
+        // Do not repopulate the infowindow if multiple clicks have been made on the same park
+        if($(".infoWindowHeader").text() === park.name) return;
         // TODO set min width of content div to be enough to contain rating/yelp logo
         let infoWindowContent =
             `<div id="infoWindowContent">
@@ -224,10 +224,13 @@ let parkMapViewModel = function() {
     };
 
     self.resetParkList = function() {
-        $("#parkList").empty();
         self.parkList.removeAll();
+        $("#parkList").empty();
         for(let i = 0; i < self.allParks.length; i++) {
             self.parkList.push(self.allParks[i]);
+        }
+        for(let marker of self.parkIdToMarker.values()) {
+            marker.setMap(self.googleMap);
         }
     };
 
