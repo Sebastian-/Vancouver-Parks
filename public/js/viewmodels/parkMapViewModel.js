@@ -33,17 +33,6 @@ let parkMapViewModel = function() {
             self.allParks.push(park);
             self.parkList.push(park);
         });
-        self.appendLastLi();
-    };
-
-    self.appendLastLi = function() {
-        if(self.parkList().length !== 0) {
-            // A filler <li> for easier navigation of the last elements in list
-            $("#parkList").append("<li class='lastListItem'></li>");
-        } else {
-            $("#parkList").empty();
-            $("#parkList").append('<li class="noResultListItem">No Results Found</li>')
-        }
     };
 
     self.initSearchMap = function() {
@@ -143,13 +132,11 @@ let parkMapViewModel = function() {
         self.parkList.remove(function(park) {
             return !result.has(park.id);
         });
-        self.appendLastLi();
         self.updateMarkers();
     };
 
     self.displayNoSearchResults = function() {
         self.parkList.removeAll();
-        self.appendLastLi();
         self.unpinAllMarkers();
     };
 
@@ -225,7 +212,6 @@ let parkMapViewModel = function() {
 
     self.resetParkList = function() {
         self.parkList.removeAll();
-        $("#parkList").empty();
         for(let i = 0; i < self.allParks.length; i++) {
             self.parkList.push(self.allParks[i]);
         }

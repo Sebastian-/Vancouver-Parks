@@ -18,8 +18,12 @@
                 <img src="img/search.png" class="searchIcon" data-bind="click: searchParks">
                 <img src="img/reset.png" class="resetIcon" data-bind="click: resetParkList">
             </div>
-            <ul id="parkList" data-bind="visible: isParkListVisible, foreach: parkList">
-                <li class="parkListItem" data-bind="text: name, click: $root.displayInfoWindow"></li>
+            <ul id="parkList" data-bind="visible: isParkListVisible">
+                <!-- ko foreach: parkList -->
+                    <li class="parkListItem" data-bind="text: name, click: $root.displayInfoWindow"></li>
+                <!-- /ko -->
+                <li class="lastListItem" data-bind="visible: parkList().length !== 0"></li>
+                <li class="noResultListItem" data-bind="visible: parkList().length === 0">No Results Found</li>
             </ul>
         </aside>
     	<script type="text/javascript" src="js/lib/jquery-3.3.1.js"></script>
