@@ -8,8 +8,6 @@ function Park(xmlParkData) {
     var self = this;
     var $parkData = $(xmlParkData);
 
-    // TODO: reevaluate if id and siteURL are worthwhile/useful
-    // TODO: consider including washroom/special features data
     self.id = parseInt($parkData.attr("ID"));
     self.siteURL = "http://covapp.vancouver.ca/parkfinder/" +
                    "parkdetail.aspx?inparkid=" + self.id

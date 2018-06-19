@@ -10,7 +10,9 @@ const yelpClient = yelp.client(YELP_API_KEY);
 app.use(express.static(__dirname + '/public'));
 
 
-app.get('/', (req, res) => res.sendFile('index.html'));
+app.get('/', (req, res) => {
+    res.sendFile('index.html');
+});
 
 
 // Route for requesting yelp reviews
@@ -47,7 +49,7 @@ app.get('/yelpReview/name/:parkName/latitude/:latitude/longitude/:longitude', (r
     });
 });
 
-app.listen(8080, () => console.log('App is listening on port 8080!'));
+app.listen(8080, () => console.log('Vancouver-Parks is listening on port 8080!'));
 
 
 // Returns true if name and parkName share any words aside from 'park'
