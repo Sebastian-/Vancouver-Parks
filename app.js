@@ -5,13 +5,15 @@ const yelp = require('yelp-fusion');
 const fs = require('fs');
 
 const app = express();
-const YELP_API_KEY = JSON.parse(fs.readFileSync('credentials.json', 'utf8'))['yelp-API-Key'];
+const YELP_API_KEY = JSON.parse(fs.readFileSync('credentials.json', 'utf8'))['yelp_API_Key'];
 const yelpClient = yelp.client(YELP_API_KEY);
-
 app.use(express.static(__dirname + '/public'));
+
 
 app.get('/', (req, res) => res.sendFile('index.html'));
 
+
+// Route for requesting yelp reviews
 app.get('/yelpReview/name/:parkName/latitude/:latitude/longitude/:longitude', (req, res) => {
     yelpClient.search({
         term: decodeURIComponent(req.params.parkName),
@@ -21,12 +23,16 @@ app.get('/yelpReview/name/:parkName/latitude/:latitude/longitude/:longitude', (r
         locale: 'en_CA',
     }).then(yelpResponse => {
         const parks = yelpResponse.jsonBody.businesses;
+        // The yelp API orders parks by relevance to the given query
+        // For simplicity, only the first result is considered
         if(parks.length === 0
            || parks[0].distance > 2000
            || !hasParkNameOverlap(parks[0].name, decodeURIComponent(req.params.parkName))) {
+            // No sufficiently good match was found
             res.json({
                 'rating': 0,
-                'count': 0
+                'count': 0,
+                'yelpURL': ""
             });
         } else {
             res.json({
@@ -36,8 +42,8 @@ app.get('/yelpReview/name/:parkName/latitude/:latitude/longitude/:longitude', (r
             });
         }
     }).catch(e => {
-        // TODO handle errors
-        console.log(e);
+        console.error(e);
+        res.status(500).send(e);
     });
 });
 

@@ -60,7 +60,7 @@ html, body {
 
 #parkList {
     list-style-type: none;
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: none;
 }
 
@@ -77,7 +77,8 @@ html, body {
 }
 
 .noResultListItem {
-    padding: 5px;
+    padding-top: 50px;
+    text-align: center;
 }
 
 .ui-menu {
