@@ -32,6 +32,6 @@
         <script src="js/lib/jquery-ui.js"></script>
         <script type="text/javascript" src="js/models/park.js"></script>
         <script type="text/javascript" src="js/viewmodels/parkMapViewmodel.js"></script>
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3A1RBSZKAOEL32uhwnstnAoL4qfjXQ8w&callback=viewModel.initGoogleMap" async defer></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3A1RBSZKAOEL32uhwnstnAoL4qfjXQ8w&callback=viewModel.initGoogleMap" onerror="alert('Failed to load Google Maps API')" async defer></script>
     </body>
 </html>

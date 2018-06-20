@@ -438,7 +438,7 @@ let parkMapViewModel = function() {
 
     // Removes all markers from the map
     self.unpinAllMarkers = function() {
-        for(const marker of self.parkIdToMarker.values()) {
+        for(let marker of self.parkIdToMarker.values()) {
             marker.setMap(null);
         };
     };
@@ -455,7 +455,7 @@ let parkMapViewModel = function() {
         if(self.parkList().length > 1) {
             self.googleMap.fitBounds(bounds);
         };
-    }
+    };
 
 
     // Toggles the display of the list of parks in the sidebar
@@ -481,7 +481,7 @@ let parkMapViewModel = function() {
         if(!self.searchMap.has(query)) {
             self.displayNoSearchResults();
             return;
-        }
+        };
 
         self.resetParkList();
         const matchingParks = self.searchMap.get(query);
@@ -587,7 +587,7 @@ let parkMapViewModel = function() {
                 reject(response);
             });
         });
-    }
+    };
 
 
     // Adds a search string and resulting park id into the search map
@@ -620,9 +620,9 @@ let parkMapViewModel = function() {
 
         // some park info has single quotes (eg. Coopers' Park)
         return query.replace(/'/g, '%27');
-    }
+    };
 
-}
+};
 
 var viewModel = new parkMapViewModel();
 ko.applyBindings(viewModel);
