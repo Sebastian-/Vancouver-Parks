@@ -5,6 +5,7 @@ let parkMapViewModel = function() {
 
     self.googleMap;
     self.infoWindow;
+    self.infoWindowViewModel;
     self.selectedMarker;
     self.allParks = [];
     self.parkList = ko.observableArray();
@@ -78,336 +79,21 @@ let parkMapViewModel = function() {
 
     // Initializes the Google Map object in the DOM
     self.setGoogleMap = function() {
-
-        // Map styling sourced from https://snazzymaps.com/style/74/becomeadinosaur
-        const mapStyle = [
-            {
-                "elementType": "labels.text",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "landscape.natural",
-                "elementType": "geometry.fill",
-                "stylers": [
-                    {
-                        "color": "#f5f5f2"
-                    },
-                    {
-                        "visibility": "on"
-                    }
-                ]
-            },
-            {
-                "featureType": "administrative",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "transit",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "poi.attraction",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "landscape.man_made",
-                "elementType": "geometry.fill",
-                "stylers": [
-                    {
-                        "color": "#ffffff"
-                    },
-                    {
-                        "visibility": "on"
-                    }
-                ]
-            },
-            {
-                "featureType": "poi.business",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "poi.medical",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "poi.place_of_worship",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "poi.school",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "poi.sports_complex",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "road.highway",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "color": "#ffffff"
-                    },
-                    {
-                        "visibility": "simplified"
-                    }
-                ]
-            },
-            {
-                "featureType": "road.arterial",
-                "stylers": [
-                    {
-                        "visibility": "simplified"
-                    },
-                    {
-                        "color": "#ffffff"
-                    }
-                ]
-            },
-            {
-                "featureType": "road.highway",
-                "elementType": "labels.icon",
-                "stylers": [
-                    {
-                        "color": "#ffffff"
-                    },
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "road.highway",
-                "elementType": "labels.icon",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "road.arterial",
-                "stylers": [
-                    {
-                        "color": "#ffffff"
-                    }
-                ]
-            },
-            {
-                "featureType": "road.local",
-                "stylers": [
-                    {
-                        "color": "#ffffff"
-                    }
-                ]
-            },
-            {
-                "featureType": "poi.park",
-                "elementType": "labels.icon",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "poi",
-                "elementType": "labels.icon",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "water",
-                "stylers": [
-                    {
-                        "color": "#71c8d4"
-                    }
-                ]
-            },
-            {
-                "featureType": "landscape",
-                "stylers": [
-                    {
-                        "color": "#e5e8e7"
-                    }
-                ]
-            },
-            {
-                "featureType": "poi.park",
-                "stylers": [
-                    {
-                        "color": "#8ba129"
-                    }
-                ]
-            },
-            {
-                "featureType": "road",
-                "stylers": [
-                    {
-                        "color": "#ffffff"
-                    }
-                ]
-            },
-            {
-                "featureType": "poi.sports_complex",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "color": "#c7c7c7"
-                    },
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "water",
-                "stylers": [
-                    {
-                        "color": "#a0d3d3"
-                    }
-                ]
-            },
-            {
-                "featureType": "poi.park",
-                "stylers": [
-                    {
-                        "color": "#91b65d"
-                    }
-                ]
-            },
-            {
-                "featureType": "poi.park",
-                "stylers": [
-                    {
-                        "gamma": 1.51
-                    }
-                ]
-            },
-            {
-                "featureType": "road.local",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "road.local",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "visibility": "on"
-                    }
-                ]
-            },
-            {
-                "featureType": "poi.government",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "landscape",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "road",
-                "elementType": "labels",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "road.arterial",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "visibility": "simplified"
-                    }
-                ]
-            },
-            {
-                "featureType": "road.local",
-                "stylers": [
-                    {
-                        "visibility": "simplified"
-                    }
-                ]
-            },
-            {
-                "featureType": "road"
-            },
-            {
-                "featureType": "road"
-            },
-            {},
-            {
-                "featureType": "road.highway"
-            }
-        ];
-
         self.googleMap = new google.maps.Map(document.getElementById("map"), {
             center: {lat: 49.255, lng: -123.130},
             zoom: 13,
             mapTypeControl: false,
-            styles: mapStyle
+            styles: MAP_STYLE
         });
     };
 
-    // Creates an empty info window
+    // Creates info window and binds to the infoWindowViewModel
     self.setInfoWindow = function() {
         self.infoWindow = new google.maps.InfoWindow({
-            content:""
+            content: document.getElementById("infoWindowTemplate").innerHTML
         });
+        self.infoWindowViewModel = new infoWindowViewModel();
+        ko.applyBindings(self.infoWindowViewModel, document.getElementById("infoWindowContent"));
     };
 
 
@@ -509,63 +195,37 @@ let parkMapViewModel = function() {
         self.selectedMarker.setAnimation(google.maps.Animation.BOUNCE);
 
         // Fill the info window with relevant content and focus
-        self.populateInfoWindow(park);
         self.infoWindow.open(map, self.selectedMarker);
+        self.populateInfoWindow(park);
         self.googleMap.panTo(self.selectedMarker.getPosition());
     };
 
 
     // Populates the info window with information on the input park
     self.populateInfoWindow = function(park) {
-        // Do not repopulate the infowindow if multiple clicks have been made
-        // on the same park
-        if($(".infoWindowHeader").text() === park.name) return;
+        if(park.name === self.infoWindowViewModel.parkName()) return;
 
-        // Display default content available for all parks
-        const infoWindowContent =
-            `<div id="infoWindowContent">
-                <h3 class="infoWindowHeader">${park.name}</h3>
-                <p class="infoWindowParkAddress">${park.address}</p>
-            </div>`;
-        self.infoWindow.setContent(infoWindowContent);
+        // Update info window with immediately available data
+        self.infoWindowViewModel.updateInfoWindow({
+            "parkName": park.name,
+            "parkAddress": park.address
+        });
+        self.infoWindow.setContent(document.getElementById("infoWindowTemplate").innerHTML);
 
-        // Attempt to append Yelp rating
-        let getReview = self.getYelpReview(park);
-        getReview.then(function(review) {
-            const rating = review.rating;
-            const reviewCount = review.count;
-
-            if(reviewCount === 0) {
-                $("#infoWindowContent").append("<p>No Yelp Reviews Available</p>");
-                return;
-            };
-
-            // Per Yelp display requirements, display star sprites and logo
-            $("<img>", {
-                id: "yelpRatingStars",
-                src: "img/" + rating + "_star.png",
-                "height": "20px"
-            }).appendTo("#infoWindowContent");
-
-            $("<a/>", {
-                "id": "yelpURL",
-                "href": review.yelpURL
-            }).appendTo("#infoWindowContent");
-
-            $("<img>", {
-                "id": "yelpTM",
-                "src": "img/Yelp_tm.png",
-                "height": "40px"
-            }).appendTo("#yelpURL");
-
-            $("#infoWindowContent").append("<p> "
-                                           + rating + " star"+ (rating !== 1 ? "s" : "")
-                                           + " with " + reviewCount + " review"
-                                           + (reviewCount !== 1 ? "s" : "") +"</p>");
+        // Attempt to fetch Yelp review data
+        self.getYelpReview(park).then(function(review) {
+            self.infoWindowViewModel.updateInfoWindow({
+                "hasYelpContent": true,
+                "yelpRating": review.rating,
+                "yelpReviewCount": review.count,
+                "yelpURL": review.yelpURL
+            });
+            self.infoWindow.setContent(document.getElementById("infoWindowTemplate").innerHTML);
         }, function(error) {
             $("#infoWindowContent").append("<p>Query for Yelp rating failed :(</p>");
             console.error(error);
         });
+
     };
 
 
@@ -625,4 +285,4 @@ let parkMapViewModel = function() {
 };
 
 var viewModel = new parkMapViewModel();
-ko.applyBindings(viewModel);
+ko.applyBindings(viewModel, document.getElementById("sidebar"));
