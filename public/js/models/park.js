@@ -8,14 +8,18 @@ function Park(xmlParkData) {
     var self = this;
     var $parkData = $(xmlParkData);
 
+    self.keywords = []
+    self.name = $parkData.find("Name").text();
+    self.keywords.push(self.name.toLowerCase());
+    self.neighbourhood = $parkData.find("NeighbourhoodName").text();
+    self.keywords.push(self.neighbourhood.toLowerCase());
+
     self.id = parseInt($parkData.attr("ID"));
     self.siteURL = "http://covapp.vancouver.ca/parkfinder/" +
                    "parkdetail.aspx?inparkid=" + self.id
-    self.name = $parkData.find("Name").text();
     self.streetNumber = $parkData.find("StreetNumber").text();
     self.streetName = $parkData.find("StreetName").text();
     self.address = self.streetNumber + " " + self.streetName;
-    self.neighbourhood = $parkData.find("NeighbourhoodName").text();
 
     var LatLng = $parkData.find("GoogleMapDest").text().split(",");
     self.lat = parseFloat(LatLng[0]);
@@ -23,9 +27,11 @@ function Park(xmlParkData) {
 
     self.facilities = [];
     $parkData.find("Facility").each(function(index, facility) {
+        const facilityType = $(facility).find("FacilityType").text();
+        self.keywords.push(facilityType.toLowerCase());
         self.facilities.push({
-            type: $(facility).find("FacilityType").text(),
+            type: facilityType,
             count: $(facility).find("FacilityCount").text()
         });
     });
-}
+};

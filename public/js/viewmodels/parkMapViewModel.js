@@ -1,19 +1,15 @@
-"use strict";
-
 let parkMapViewModel = function() {
-    const self = this;
+    "use strict";
 
-    self.googleMap;
-    self.infoWindow;
-    self.infoWindowViewModel;
-    self.selectedMarker;
+    const self = this;
+    self.googleMap = null;
+    self.infoWindow = null;
+    self.infoWindowViewModel = null;
+    self.selectedMarker = null;
     self.allParks = [];
     self.parkList = ko.observableArray();
     self.isParkListVisible = ko.observable(true);
     self.searchQuery = ko.observable("");
-
-    // Maps autocomplete search terms {String} to resulting set of park IDs {Set(Integer)}
-    self.searchMap = new Map();
 
     // Maps park.id {Integer} to corresponding map marker {google.map.Marker}
     self.parkIdToMarker = new Map();
@@ -26,8 +22,8 @@ let parkMapViewModel = function() {
         dataType: "xml",
         success: function(xmlResponse) {
             self.initListOfParks(xmlResponse);
-            self.initSearchMap();
-            self.initSearchBox();
+            // TODO: uncomment after Udacity Review
+            // self.initSearchBox();
         }
     }).fail(function() {
         alert("Could not load park data :(");
@@ -44,29 +40,25 @@ let parkMapViewModel = function() {
         });
     };
 
-
-    // Initializes the mapping of search terms to resulting parks (via ID)
-    self.initSearchMap = function() {
-        ko.utils.arrayForEach(self.allParks, function(park) {
-            self.addToSearchMap(park.name, park.id);
-            self.addToSearchMap(park.neighbourhood, park.id);
-            ko.utils.arrayForEach(park.facilities, function(facility) {
-                self.addToSearchMap(facility.type, park.id);
-            });
-            // A query of "" should return all parks
-            self.addToSearchMap("", park.id);
-        });
-    };
-
-
+    /* Disabled to comply with Udacity criteria
+       TODO: uncomment after Udacity review
     // Creates a jQuery autocomplete input element
     self.initSearchBox = function() {
+        let suggestions = new Set();
+        for(let i = 0; i < self.allParks.length; i++) {
+            const park = self.allParks[i];
+            suggestions.add(park.name);
+            suggestions.add(park.neighbourhood);
+            ko.utils.arrayForEach(park.facilities, function(facility) {
+                suggestions.add(facility.type);
+            });
+        };
         $("#searchBarInput").autocomplete({
-            source: Array.from(self.searchMap.keys()),
+            source: Array.from(suggestions),
             minLength: 2
         });
     };
-
+    */
 
     // Initialize all Google Map related elements
     self.initGoogleMap = function() {
@@ -126,7 +118,7 @@ let parkMapViewModel = function() {
     self.unpinAllMarkers = function() {
         for(let marker of self.parkIdToMarker.values()) {
             marker.setMap(null);
-        };
+        }
     };
 
     // Pins markers on the map corresponding to the parks in self.parkList()
@@ -140,7 +132,7 @@ let parkMapViewModel = function() {
         });
         if(self.parkList().length > 1) {
             self.googleMap.fitBounds(bounds);
-        };
+        }
     };
 
 
@@ -152,32 +144,23 @@ let parkMapViewModel = function() {
 
     // Filters park list based on the text of self.searchQuery()
     self.searchParks = function() {
-        // autocomplete text does not update properly without refocusing
-        // i.e. knockoutJS/most browsers do not seem to recognize updates to
-        // the input text when a selection is made from the suggestions menu
-        $("#searchBarInput").blur();
-        $("#searchBarInput").focus();
-
-        // Close the info window since it is no longer relevant when the user
-        // is searching
         self.infoWindow.close();
+        self.parkList.removeAll();
 
-        const query = self.searchQuery().trim();
-
-        if(!self.searchMap.has(query)) {
-            self.displayNoSearchResults();
-            return;
-        };
-
-        self.resetParkList();
-        const matchingParks = self.searchMap.get(query);
-        self.parkList.remove(function(park) {
-            return !matchingParks.has(park.id);
-        });
+        const query = self.searchQuery().trim().toLowerCase();
+        for(let i = 0; i < self.allParks.length; i++) {
+            const park = self.allParks[i];
+            for(let j = 0; j < park.keywords.length; j++) {
+                if(park.keywords[j].includes(query)) {
+                    self.parkList.push(park);
+                    break;
+                }
+            }
+        }
         self.updateMarkers();
         if(self.parkList().length === 1) {
             self.displayInfoWindow(self.parkList()[0]);
-        };
+        }
     };
 
 
@@ -250,16 +233,6 @@ let parkMapViewModel = function() {
     };
 
 
-    // Adds a search string and resulting park id into the search map
-    self.addToSearchMap = function(key, parkID) {
-        if(self.searchMap.has(key)) {
-            self.searchMap.get(key).add(parkID);
-        } else {
-            self.searchMap.set(key, new Set([parkID]));
-        }
-    };
-
-
     // Restores all parks to self.parkList
     self.resetParkList = function() {
         self.parkList.removeAll();
@@ -271,7 +244,7 @@ let parkMapViewModel = function() {
     };
 
 
-    // Formats query parameters for queries made to the expressJS server
+    // Formats query parameters for queries made to the server
     self.formatQueryParams = function(params) {
         let query = "";
         Object.keys(params).forEach(function(key,index) {
