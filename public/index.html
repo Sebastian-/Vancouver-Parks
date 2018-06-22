@@ -8,33 +8,17 @@
         <link href="css/style.css" rel="stylesheet">
     </head>
     <body>
-        <div id="map"></div>
-        <div id="infoWindowTemplate">
-            <div id="infoWindowContent">
-                <h3 class="infoWindowHeader" data-bind="text: parkName()"></h3>
-                <p class="infoWindowParkAddress" data-bind="text: parkAddress()"></p>
-                <div id="yelpContent" data-bind="visible: hasYelpContent">
-                    <p data-bind="visible: !hasYelpRating()">No Yelp Reviews Available</p>
-                    <div data-bind="visible: hasYelpRating()">
-                        <img id="yelpRatingStars" height="20px" data-bind="attr: {src: imgSource}">
-                        <a data-bind="attr: {href: yelpURL()}">
-                            <img id="yelpTM" height="40px" src="img/Yelp_tm.png">
-                        </a>
-                        <p id="ratingSummary" data-bind="text: ratingSummary"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <aside id="sidebar" data-bind="style: {height: isParkListVisible()? '100%' : 'auto'}">
-            <div id="searchBar">
-                <img src="img/hamburger_icon.png" class="hamburgerIcon" data-bind="click: toggleParkList">
-                <form id="searchBarForm" data-bind="submit: searchParks">
-                    <input type="text" id="searchBarInput" data-bind="textInput: searchQuery">
+        <div id="map" class="mapCanvas"></div>
+        <aside id="parkListSidebar" class="sidebar" data-bind="style: {height: isParkListVisible()? '100%' : 'auto'}">
+            <div class="searchBar">
+                <img src="img/hamburger_icon.png" class="hamburgerIcon" data-bind="click: toggleParkList" alt="Toggle park list">
+                <form class="searchBarForm" data-bind="submit: searchParks">
+                    <input type="text" class="searchBarInput" data-bind="textInput: searchQuery">
                 </form>
-                <img src="img/search.png" class="searchIcon" data-bind="click: searchParks">
-                <img src="img/reset.png" class="resetIcon" data-bind="click: resetParkList">
+                <img src="img/search.png" class="searchIcon" data-bind="click: searchParks" alt="Search">
+                <img src="img/reset.png" class="resetIcon" data-bind="click: resetParkList" alt="Reset all parks">
             </div>
-            <ul id="parkList" data-bind="visible: isParkListVisible">
+            <ul class="parkList" data-bind="visible: isParkListVisible">
                 <!-- ko foreach: parkList -->
                     <li class="parkListItem" data-bind="text: name, click: $root.displayInfoWindow"></li>
                 <!-- /ko -->
@@ -42,14 +26,30 @@
                 <li class="noResultListItem" data-bind="visible: parkList().length === 0">No Parks Found</li>
             </ul>
         </aside>
-    	<script type="text/javascript" src="js/lib/jquery-3.3.1.js"></script>
-        <script type="text/javascript" src="js/lib/knockout-3.5.0rc.js"></script>
+        <div id="infoWindowTemplate" class="template">
+            <div id="infoWindowContent" class="infoWindowContainer">
+                <h3 class="infoWindowHeader" data-bind="text: parkName()"></h3>
+                <p class="infoWindowParkAddress" data-bind="text: parkAddress()"></p>
+                <div class="yelpContent" data-bind="visible: hasYelpContent">
+                    <p data-bind="visible: !hasYelpRating()">No Yelp Reviews Available</p>
+                    <div data-bind="visible: hasYelpRating()">
+                        <img class="yelpRatingStars" src="x.png" data-bind="attr: {src: imgSource}" alt="Yelp star rating">
+                        <a data-bind="attr: {href: yelpURL()}">
+                            <img class="yelpTM" src="img/Yelp_tm.png" alt="Yelp trademark">
+                        </a>
+                        <p class="ratingSummary" data-bind="text: ratingSummary"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    	<script src="js/lib/jquery-3.3.1.js"></script>
+        <script src="js/lib/knockout-3.5.0rc.js"></script>
         <script src="js/lib/external/jquery/jquery.js"></script>
         <script src="js/lib/jquery-ui.js"></script>
-        <script type="text/javascript" src="js/constants.js"></script>
-        <script type="text/javascript" src="js/models/park.js"></script>
-        <script type="text/javascript" src="js/viewmodels/infoWindowViewModel.js"></script>
-        <script type="text/javascript" src="js/viewmodels/parkMapViewModel.js"></script>
+        <script src="js/constants.js"></script>
+        <script src="js/models/park.js"></script>
+        <script src="js/viewmodels/infoWindowViewModel.js"></script>
+        <script src="js/viewmodels/parkMapViewModel.js"></script>
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC3A1RBSZKAOEL32uhwnstnAoL4qfjXQ8w&callback=viewModel.initGoogleMap" onerror="alert('Failed to load Google Maps API')" async defer></script>
     </body>
 </html>

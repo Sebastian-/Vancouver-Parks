@@ -258,4 +258,4 @@ let parkMapViewModel = function() {
 };
 
 var viewModel = new parkMapViewModel();
-ko.applyBindings(viewModel, document.getElementById("sidebar"));
+ko.applyBindings(viewModel, document.getElementById("parkListSidebar"));

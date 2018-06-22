@@ -31,7 +31,7 @@ A Google Maps application showcasing parks in Vancouver BC.
 
 * `cd Vancouver-Parks/` then enter `npm install` to load all dependencies
 
-* Create a file named `credentials.json` containing your Yelp API key:
+* Create a file in the root directory named `credentials.json` containing your Yelp API key:
 
 ```
 {

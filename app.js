@@ -1,11 +1,9 @@
-'use strict';
-
 const express = require('express');
 const yelp = require('yelp-fusion');
 const fs = require('fs');
 
 const app = express();
-const YELP_API_KEY = JSON.parse(fs.readFileSync('credentials.json', 'utf8'))['yelp_API_Key'];
+const YELP_API_KEY = JSON.parse(fs.readFileSync('credentials.json', 'utf8')).yelp_API_Key;
 const yelpClient = yelp.client(YELP_API_KEY);
 app.use(express.static(__dirname + '/public'));
 
@@ -17,6 +15,8 @@ app.get('/', (req, res) => {
 
 // Route for requesting yelp reviews
 app.get('/yelpReview/name/:parkName/latitude/:latitude/longitude/:longitude', (req, res) => {
+    'use strict';
+
     yelpClient.search({
         term: decodeURIComponent(req.params.parkName),
         latitude: decodeURIComponent(req.params.latitude),
@@ -27,9 +27,9 @@ app.get('/yelpReview/name/:parkName/latitude/:latitude/longitude/:longitude', (r
         const parks = yelpResponse.jsonBody.businesses;
         // The yelp API orders parks by relevance to the given query
         // For simplicity, only the first result is considered
-        if(parks.length === 0
-           || parks[0].distance > 2000
-           || !hasParkNameOverlap(parks[0].name, decodeURIComponent(req.params.parkName))) {
+        if(parks.length === 0 ||
+           parks[0].distance > 2000 ||
+           !hasParkNameOverlap(parks[0].name, decodeURIComponent(req.params.parkName))) {
             // No sufficiently good match was found
             res.json({
                 'rating': 0,
@@ -54,6 +54,8 @@ app.listen(8080, () => console.log('Vancouver-Parks is listening on port 8080!')
 
 // Returns true if name and parkName share any words aside from 'park'
 function hasParkNameOverlap(name, parkName) {
+    'use strict';
+
     name = name.toLowerCase().trim();
 
     for(let word of parkName.split(/\s/)) {
@@ -63,4 +65,4 @@ function hasParkNameOverlap(name, parkName) {
     }
 
     return false;
-};
+}

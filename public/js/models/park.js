@@ -5,10 +5,12 @@
 */
 
 function Park(xmlParkData) {
+    "use strict";
+
     var self = this;
     var $parkData = $(xmlParkData);
 
-    self.keywords = []
+    self.keywords = [];
     self.name = $parkData.find("Name").text();
     self.keywords.push(self.name.toLowerCase());
     self.neighbourhood = $parkData.find("NeighbourhoodName").text();
@@ -16,7 +18,7 @@ function Park(xmlParkData) {
 
     self.id = parseInt($parkData.attr("ID"));
     self.siteURL = "http://covapp.vancouver.ca/parkfinder/" +
-                   "parkdetail.aspx?inparkid=" + self.id
+                   "parkdetail.aspx?inparkid=" + self.id;
     self.streetNumber = $parkData.find("StreetNumber").text();
     self.streetName = $parkData.find("StreetName").text();
     self.address = self.streetNumber + " " + self.streetName;
@@ -34,4 +36,4 @@ function Park(xmlParkData) {
             count: $(facility).find("FacilityCount").text()
         });
     });
-};
+}
