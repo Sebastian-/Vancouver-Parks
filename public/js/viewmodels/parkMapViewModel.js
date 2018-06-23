@@ -22,8 +22,7 @@ let parkMapViewModel = function() {
         dataType: "xml",
         success: function(xmlResponse) {
             self.initListOfParks(xmlResponse);
-            // TODO: uncomment after Udacity Review
-            // self.initSearchBox();
+            self.initSearchBox();
         }
     }).fail(function() {
         alert("Could not load park data :(");
@@ -40,8 +39,7 @@ let parkMapViewModel = function() {
         });
     };
 
-    /* Disabled to comply with Udacity criteria
-       TODO: uncomment after Udacity review
+
     // Creates a jQuery autocomplete input element
     self.initSearchBox = function() {
         let suggestions = new Set();
@@ -49,16 +47,16 @@ let parkMapViewModel = function() {
             const park = self.allParks[i];
             suggestions.add(park.name);
             suggestions.add(park.neighbourhood);
-            ko.utils.arrayForEach(park.facilities, function(facility) {
-                suggestions.add(facility.type);
-            });
-        };
+            for(let j = 0; j < park.facilities.length; j++) {
+                suggestions.add(park.facilities[j].type);
+            }
+        }
+
         $("#searchBarInput").autocomplete({
             source: Array.from(suggestions),
             minLength: 2
         });
     };
-    */
 
     // Initialize all Google Map related elements
     self.initGoogleMap = function() {

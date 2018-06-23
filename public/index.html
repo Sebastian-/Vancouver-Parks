@@ -13,7 +13,7 @@
             <div class="searchBar">
                 <img src="img/hamburger_icon.png" class="hamburgerIcon" data-bind="click: toggleParkList" alt="Toggle park list">
                 <form class="searchBarForm" data-bind="submit: searchParks">
-                    <input type="text" class="searchBarInput" data-bind="textInput: searchQuery">
+                    <input id="searchBarInput" type="text" class="searchInput" data-bind="textInput: searchQuery">
                 </form>
                 <img src="img/search.png" class="searchIcon" data-bind="click: searchParks" alt="Search">
                 <img src="img/reset.png" class="resetIcon" data-bind="click: resetParkList" alt="Reset all parks">
@@ -33,7 +33,7 @@
                 <div class="yelpContent" data-bind="visible: hasYelpContent">
                     <p data-bind="visible: !hasYelpRating()">No Yelp Reviews Available</p>
                     <div data-bind="visible: hasYelpRating()">
-                        <img class="yelpRatingStars" src="x.png" data-bind="attr: {src: imgSource}" alt="Yelp star rating">
+                        <img class="yelpRatingStars" src="" data-bind="attr: {src: imgSource}" alt="Yelp star rating">
                         <a data-bind="attr: {href: yelpURL()}">
                             <img class="yelpTM" src="img/Yelp_tm.png" alt="Yelp trademark">
                         </a>
