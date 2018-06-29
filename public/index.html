@@ -10,13 +10,15 @@
     <body>
         <div id="map" class="mapCanvas"></div>
         <aside id="parkListSidebar" class="sidebar" data-bind="style: {height: isParkListVisible()? '100%' : 'auto'}">
-            <div class="searchBar">
-                <img src="img/hamburger_icon.png" class="hamburgerIcon" data-bind="click: toggleParkList" alt="Toggle park list">
-                <form class="searchBarForm" data-bind="submit: searchParks">
-                    <input id="searchBarInput" type="text" class="searchInput" data-bind="textInput: searchQuery">
-                </form>
-                <img src="img/search.png" class="searchIcon" data-bind="click: searchParks" alt="Search">
-                <img src="img/reset.png" class="resetIcon" data-bind="click: resetParkList" alt="Reset all parks">
+            <div class="searchBarContainer">
+                <div class="searchBar">
+                    <img src="img/hamburger_icon.png" class="hamburgerIcon" data-bind="click: toggleParkList" alt="Toggle park list">
+                    <form class="searchBarForm" data-bind="submit: searchParks">
+                        <input id="searchBarInput" type="text" class="searchInput" data-bind="textInput: searchQuery">
+                    </form>
+                    <img src="img/search.png" class="searchIcon" data-bind="click: searchParks" alt="Search">
+                    <img src="img/reset.png" class="resetIcon" data-bind="click: resetParkList" alt="Reset all parks">
+                </div>
             </div>
             <ul class="parkList" data-bind="visible: isParkListVisible">
                 <!-- ko foreach: parkList -->

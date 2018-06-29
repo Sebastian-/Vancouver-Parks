@@ -8,7 +8,7 @@ let parkMapViewModel = function() {
     self.selectedMarker = null;
     self.allParks = [];
     self.parkList = ko.observableArray();
-    self.isParkListVisible = ko.observable(true);
+    self.isParkListVisible = ko.observable(false);
     self.searchQuery = ko.observable("");
 
     // Maps park.id {Integer} to corresponding map marker {google.map.Marker}
